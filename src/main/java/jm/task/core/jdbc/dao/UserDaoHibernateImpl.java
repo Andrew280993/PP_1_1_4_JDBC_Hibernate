@@ -1,8 +1,13 @@
 package jm.task.core.jdbc.dao;
 
+
 import jm.task.core.jdbc.model.User;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.util.List;
+
+import static jm.task.core.jdbc.util.Util.getSessionFactory;
 
 public class UserDaoHibernateImpl implements UserDao {
     public UserDaoHibernateImpl() {
@@ -12,7 +17,25 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
+        Session session = getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
 
+        session.createNativeQuery("CREATE TABLE IF NOT EXISTS users " +
+                "(id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                "name VARCHAR(225) NOT NULL, " + "lastName VARCHAR(225) NOT NULL, " +
+                "age TINYINT NOT NULL)");
+
+        transaction.commit();
+        session.close();
+    }
+
+    public void dropUsersTable() {
+        Session session = getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.createSQLQuery("DROP TABLE IF EXISTS users").addEntity(User.class).;
+        query.executeUpdate();
+        transaction.commit();
+        session.close();
     }
 
     @Override
